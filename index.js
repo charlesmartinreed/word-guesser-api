@@ -15,8 +15,12 @@ app.use(express.json());
 app.set("trust proxy", 1);
 
 // ROUTES
-app.get("/", (req, res) => res.send("Server up and running!"));
-app.get("/words/:count", async (req, res) => {
+app.all("*", (req, res, next) => {
+  res.setHeader("Cache-Control", "s-max-age=1", "stale-while-revalidate");
+  next();
+});
+
+app.get("/api/words/:count", async (req, res) => {
   let fetchedWords = [];
 
   for (let i = 0; i < req.params.count; i++) {
