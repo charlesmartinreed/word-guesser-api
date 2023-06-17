@@ -20,17 +20,16 @@ app.all("*", (req, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res
     .status(200)
     .send(
       "Hi! This is a demo api, so please use the /api routes detailed on the project Github -- https://github.com/charlesmartinreed/word-guesser-api -- to see what's going on around here. ✌🏿"
     );
 });
+let fetchedWords = [];
 
 app.get("/api/words/:count", async (req, res) => {
-  let fetchedWords = [];
-
   for (let i = 0; i < req.params.count; i++) {
     let { word } = await executeFetch(getWordURL, apiKey);
     let definitions = await executeFetch(
@@ -40,8 +39,12 @@ app.get("/api/words/:count", async (req, res) => {
     fetchedWords = [...fetchedWords, { word: word, definitions: definitions }];
   }
 
-  res.status(200).json(fetchedWords);
+  console.log("fetched!", fetchedWords);
+
+  res.status(200).send(fetchedWords);
 });
+
+app.get("*", (req, res) => res.redirect("/api"));
 
 async function executeFetch(URL, apiKey) {
   try {
@@ -58,4 +61,6 @@ async function executeFetch(URL, apiKey) {
   }
 }
 
-app.listen(PORT, () => console.log("server now running"));
+app.listen(PORT, () => {
+  console.log("up and running on PORT", PORT);
+});
