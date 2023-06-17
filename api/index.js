@@ -9,7 +9,8 @@ import fetch from "node-fetch";
 const PORT = process.env.PORT || 7000;
 const apiKey = process.env.RAPID_API_KEY;
 const getWordURL = `https://wordsapiv1.p.rapidapi.com/words/?random=true`;
-const getDefinitionURL = `https://wordsapiv1.p.rapidapi.com/words`;
+
+// const getDefinitionURL = `https://wordsapiv1.p.rapidapi.com/words`;
 
 app.use(express.json());
 app.set("trust proxy", 1);
@@ -27,19 +28,22 @@ app.get("/api", (req, res) => {
       "Hi! This is a demo api, so please use the /api routes detailed on the project Github -- https://github.com/charlesmartinreed/word-guesser-api -- to see what's going on around here. ✌🏿"
     );
 });
-let fetchedWords = [];
+let fetchedWord;
 
-app.get("/api/words/:count", async (req, res) => {
-  for (let i = 0; i < req.params.count; i++) {
-    let { word } = await executeFetch(getWordURL, apiKey);
-    let definitions = await executeFetch(
-      `${getDefinitionURL}/${word}/definitions`,
-      apiKey
-    );
-    fetchedWords = [...fetchedWords, { word: word, definitions: definitions }];
+app.get("/api/word/", async (req, res) => {
+  let result;
+  result = await executeFetch(getWordURL, apiKey);
+
+  if (!result.results || !result.results[0].definition) {
+    result = await executeFetch(getWordURL, apiKey);
   }
 
-  res.status(200).send(fetchedWords);
+  let word = result.word;
+  let definition = result.results[0].definition;
+
+  fetchedWord = { word: word, definitions: definition };
+
+  res.status(200).send(fetchedWord);
 });
 
 app.get("/", (req, res) => res.redirect("/api"));
