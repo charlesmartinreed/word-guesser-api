@@ -9,7 +9,7 @@ import fetch from "node-fetch";
 const PORT = process.env.PORT || 7000;
 const apiKey = process.env.RAPID_API_KEY;
 const getWordURL = `https://wordsapiv1.p.rapidapi.com/words/?random=true`;
-const getDefinitionURL = `https://wordsapiv1.p.rapidapi.com/words/`;
+const getDefinitionURL = `https://wordsapiv1.p.rapidapi.com/words`;
 
 app.use(express.json());
 app.set("trust proxy", 1);
@@ -39,14 +39,14 @@ app.get("/api/words/:count", async (req, res) => {
     fetchedWords = [...fetchedWords, { word: word, definitions: definitions }];
   }
 
-  console.log("fetched!", fetchedWords);
-
   res.status(200).send(fetchedWords);
 });
 
+app.get("/", (req, res) => res.redirect("/api"));
 app.get("*", (req, res) => res.redirect("/api"));
 
 async function executeFetch(URL, apiKey) {
+  console.log("fetching from url", URL);
   try {
     let res = await fetch(URL, {
       method: "GET",
