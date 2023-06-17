@@ -17,7 +17,7 @@ app.set("trust proxy", 1);
 // ROUTES
 app.get("/", (req, res) => res.send("Server up and running!"));
 app.get("/words/:count", async (req, res) => {
-  let fetchedWords = [["incredible", {}]];
+  let fetchedWords = [];
 
   for (let i = 0; i < req.params.count; i++) {
     let { word } = executeFetch(getWordURL, apiKey);
