@@ -31,8 +31,28 @@ function updateUITimerDisplay() {
   document.getElementById("timer__display").textContent = currentTime;
 }
 
-async function fetchWords() {}
+function updateUIWordList() {
+  document.querySelectorAll(".word__definition").forEach((definitionDiv) => {
+    definitionDiv.textContent =
+      wordsToGuess[definitionDiv.getAttribute("data-index")].word;
+  });
+}
 
-window.addEventListener("DOMContentLoaded", (e) => {
-  //   startTimer();
+async function fetchWords() {
+  // will return an array of arrays
+  // where each item looks like: { word: word, definition: {definition} }
+
+  try {
+    let res = await fetch("/words/10");
+    if (res.ok) {
+      wordsToGuess = res.json();
+      updateUIWordList();
+    }
+  } catch {
+    console.error(e);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", async (e) => {
+  // startTimer();
 });
